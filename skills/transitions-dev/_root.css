@@ -1,0 +1,73 @@
+/* Keizoku UI — motion root.
+   Replaces the transitions.dev scale. Same file position, different taste.
+
+   The ObsidianUI/transitions.dev scale expressed motion as SOFTENING:
+   fade + 2-4px blur + scale 0.96-0.98 on an expo-out curve. Keizoku
+   expresses motion as MECHANISM: things clip, draw, travel and snap
+   along the grid. Nothing blurs. Nothing springs. Nothing shrinks.
+
+   If you find yourself reaching for a blur or a bounce, you are
+   writing ObsidianUI. Go use ObsidianUI. */
+:root {
+  /* ── Grid ──────────────────────────────────────────────────────
+     Every distance in this file is a multiple of --k-unit. Motion
+     that lands off-grid is the thing that makes a ruled layout look
+     broken, so there are no arbitrary pixel offsets here. */
+  --k-unit: 8px;
+  --k-gutter: 96px;
+  --k-rule: 1px;
+  --k-dash: 4px 4px;
+
+  /* ── Durations ─────────────────────────────────────────────────
+     Four steps, not seven. A short scale reads mechanical; a finely
+     graded one reads organic, which is the other library's job. */
+  --k-dur-0: 0ms;        /* state changes that should not animate */
+  --k-dur-1: 120ms;      /* ink/fill change, hover, press, focus */
+  --k-dur-2: 200ms;      /* travel: pill slide, rail move, tabs */
+  --k-dur-3: 320ms;      /* reveal: clip wipe, panel open, accordion */
+  --k-dur-draw: 640ms;   /* rules drawing themselves in, once, on entry */
+
+  /* ── Easings ───────────────────────────────────────────────────
+     Two curves and a step. --k-ease-travel is symmetric in/out so
+     movement reads as a carriage on a track rather than a thrown
+     object. --k-ease-draw is linear because a pen does not ease. */
+  --k-ease-travel: cubic-bezier(0.65, 0, 0.35, 1);
+  --k-ease-draw: linear;
+  --k-ease-snap: steps(1, end);
+
+  /* ── Distances ─────────────────────────────────────────────────
+     On-grid only. Note there is no 12px: it is not a multiple of 8,
+     and it is the distance the other library reaches for most. */
+  --k-travel-1: var(--k-unit);              /*  8px — label nudge */
+  --k-travel-2: calc(var(--k-unit) * 2);    /* 16px — row / card entry */
+  --k-travel-3: calc(var(--k-unit) * 3);    /* 24px — section entry */
+
+  /* ── Reveal ────────────────────────────────────────────────────
+     Keizoku's replacement for fade+blur. Content is uncovered by a
+     moving edge, not faded through translucency. Direction is set
+     per component; these are the two resting states. */
+  --k-clip-hidden: inset(0 100% 0 0);
+  --k-clip-shown: inset(0 0 0 0);
+
+  /* ── Deliberately absent ───────────────────────────────────────
+     --blur-*      blur is ObsidianUI's signature, not ours
+     --scale-*     press is a 120ms ink change, not a shrink
+     --ease-bounce no overshoot, ever; instruments don't wobble
+     --shadow-*    depth comes from rules and 1px rings
+     Adding any of these back collapses the distinction between the
+     two libraries. It is the only rule in this file that matters. */
+}
+
+/* Global floor. Every Keizoku snippet still ships its own local
+   reduced-motion block; this sits beneath them. Durations go to
+   0.01ms rather than 0 so transitionend/animationend still fire and
+   any JS awaiting them does not hang. */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --k-dur-1: 0.01ms;
+    --k-dur-2: 0.01ms;
+    --k-dur-3: 0.01ms;
+    --k-dur-draw: 0.01ms;
+    --k-clip-hidden: inset(0 0 0 0);
+  }
+}

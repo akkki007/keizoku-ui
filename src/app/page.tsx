@@ -1,10 +1,10 @@
 import { Hero } from "@/components/landing/hero";
-import { Navbar } from "@/components/site/navbar";
+import { SiteNavbar } from "@/components/site/site-navbar";
 
 export default function Home() {
   return (
     <>
-      <Navbar />
+      <SiteNavbar />
       <main>
         <Hero />
       </main>

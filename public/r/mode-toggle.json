@@ -1,0 +1,44 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "mode-toggle",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "lucide-react",
+    "next-themes",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "components/ui/mode-toggle.tsx",
+      "target": "@ui/mode-toggle.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport { Moon, Sun } from \"lucide-react\";\nimport { useTheme } from \"next-themes\";\nimport { cn } from \"@/lib/utils\";\n\n/* Both icons stay mounted and swap by rotation, so the change animates in\n   and out without AnimatePresence — and without the blur-scale cross-fade\n   Keizoku refuses. A quarter turn on the travel curve reads as one dial\n   being turned, which is the mechanism this control actually is.\n\n   Which icon shows is decided by the `.dark` class that next-themes writes\n   on <html>, not by React state — so there is no mounted check, no\n   hydration mismatch, and no icon flash on first paint. The theme is only\n   read inside the click handler, where it is always resolved. */\nexport function ModeToggle({ className }: { className?: string }) {\n  const { resolvedTheme, setTheme } = useTheme();\n\n  const icon =\n    \"absolute size-[17px] transition-[opacity,rotate] duration-[var(--k-dur-2)] ease-[var(--k-ease-travel)]\";\n\n  return (\n    <button\n      type=\"button\"\n      onClick={() => setTheme(resolvedTheme === \"dark\" ? \"light\" : \"dark\")}\n      aria-label=\"Toggle theme\"\n      className={cn(\n        \"relative grid size-8 place-items-center rounded-full text-muted-foreground transition-colors duration-[var(--k-dur-1)] hover:bg-accent hover:text-foreground\",\n        className,\n      )}\n    >\n      <Sun\n        aria-hidden\n        className={cn(icon, \"rotate-90 opacity-0 dark:rotate-0 dark:opacity-100\")}\n      />\n      <Moon\n        aria-hidden\n        className={cn(icon, \"rotate-0 opacity-100 dark:-rotate-90 dark:opacity-0\")}\n      />\n    </button>\n  );\n}\n"
+    },
+    {
+      "path": "lib/utils.ts",
+      "target": "@lib/utils.ts",
+      "type": "registry:lib",
+      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    }
+  ],
+  "css": {
+    ":root": {
+      "--k-dur-1": "120ms",
+      "--k-dur-2": "200ms",
+      "--k-dur-3": "320ms",
+      "--k-dur-draw": "640ms",
+      "--k-ease-travel": "cubic-bezier(0.65, 0, 0.35, 1)",
+      "--k-ease-draw": "linear"
+    },
+    "@media (prefers-reduced-motion: reduce)": {
+      ":root": {
+        "--k-dur-1": "0.01ms",
+        "--k-dur-2": "0.01ms",
+        "--k-dur-3": "0.01ms",
+        "--k-dur-draw": "0.01ms"
+      }
+    }
+  },
+  "docs": "This component reads your project's own shadcn tokens — background, foreground, border, muted — so it arrives already themed. For the warm-paper Keizoku palette instead, add the theme: npx shadcn@latest add \"https://keizoku.akkki.tech/r/theme.json\""
+}

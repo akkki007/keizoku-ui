@@ -67,10 +67,14 @@ The 2× gap ratio still applies *inside* a ruled cell — rules replace separato
 ## Files
 
 ```
-KEIZOKU.md      this document
-tokens.css      the full scale — all values in :root, no build required
-hero.html       hero section, self-contained preview
-skills/         the nine craft skills, with taste dials reset
+docs/KEIZOKU.md       this document
+src/styles/keizoku.css   the full token scale — colour, type, motion;
+                         the optional theme registry item is generated from it
+src/components/ui/       installable primitives (ruled-section, mode-toggle)
+src/components/block/    installable composed components (navbar)
+src/content/             the MDX docs, served at /docs
+scripts/registry.ts      generates public/r/*.json from the two folders above
+skills/                  the nine craft skills, with taste dials reset
   KEIZOKU-TASTE.md            which principles are inverted and why
   transitions-dev/_root.css   Keizoku motion scale (replaces transitions.dev)
 ```
@@ -80,15 +84,37 @@ Everything in `skills/` not named in `KEIZOKU-TASTE.md` is an **invariant** — 
 ## Preview
 
 ```bash
-cd "Keizoku UI" && python3 -m http.server 4173
-# open http://localhost:4173/hero.html
+npm install
+npm run dev
+# the landing page at http://localhost:3000
+# the docs at http://localhost:3000/docs
 ```
 
-The hero's motion does not show in a screenshot. On load: six rules draw themselves in on a linear curve, the headline wipes in word by word, the lede follows. On pointer move a crosshair **snaps** to the 48px cell with a live coordinate readout — the stepping is the point. All of it collapses to static under `prefers-reduced-motion`.
+The hero's motion does not show in a screenshot. On load the headline rises word by word and a single vermilion glow drifts behind it. All of it collapses to static under `prefers-reduced-motion`.
+
+## Distribution
+
+Components install into a consumer's project through the shadcn CLI, as source they own:
+
+```bash
+npx shadcn@latest add "https://keizoku.akkki.tech/r/navbar.json"
+```
+
+`scripts/registry.ts` generates one manifest per `.tsx` file in `src/components/ui/` and `src/components/block/`, following each file's imports through the TypeScript AST. The docs page for a component loads the same manifest, so its documented source and its installed source cannot differ.
+
+**Components carry no palette.** They are written against shadcn's semantic names — `background`, `foreground`, `border`, `muted`, `primary` — so an installed component reads the host project's colours rather than importing Keizoku's. The only CSS a component ships is six motion variables. This is the one place the library's identity is deliberately *not* enforced: a navbar in someone else's product should look like their navbar, and the taste that survives the swap is the structural part — the drawn rules, the label gutter, the framed surface, the radius contrast.
+
+Keizoku's own values ship separately, as a `registry:theme` item generated from `src/styles/keizoku.css`:
+
+```bash
+npx shadcn@latest add "https://keizoku.akkki.tech/r/theme.json"
+```
 
 ## Next
 
-- [ ] Port `hero.html` to React + Tailwind v4 (add `@theme inline` mapping onto the `:root` tokens — do not move values into `@theme`, or any unbuilt page renders unstyled)
-- [ ] Ruled section container as the second component — the primitive every other layout hangs off
+- [x] Port `hero.html` to React + Tailwind v4 (`@theme inline` maps onto the `:root` tokens; values stay in `:root`, or any unbuilt page renders unstyled)
+- [x] Ruled section container as the second component — the primitive every other layout hangs off
+- [x] shadcn-compatible registry, and a docs site that installs from it
 - [ ] Re-derive the `transitions-dev` recipe inventory into Keizoku's motion vocabulary
+- [ ] Bring the landing hero onto the motion scale — it still uses blur and `ease-out-expo`, both of which `KEIZOKU-TASTE.md` refuses
 - [ ] Self-host Geist / Geist Mono as `.woff2` instead of the Google Fonts CDN

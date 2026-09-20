@@ -1,0 +1,135 @@
+---
+title: Manual setup
+description: Tailwind v4, the cn helper and the motion variables, without the shadcn CLI.
+---
+
+import { CodeBlock, Step } from "@/components/docs/code-block"
+
+# Manual setup
+
+`npx shadcn@latest init` does all of this in one command, and
+[Installation](/docs/installation) is the shorter road. This page is for
+projects that are not using the CLI — a different framework, an existing design
+system, or a codebase where `init` would touch more than you want.
+
+<Step step={1} title="Install Tailwind CSS v4" copyText="npm install tailwindcss @tailwindcss/postcss postcss">
+
+Keizoku targets **Tailwind v4**. Components use `@theme inline` variables and
+arbitrary-property syntax that v3 does not understand, so v3 is not supported —
+there is no config file to port.
+
+<CodeBlock code="npm install tailwindcss @tailwindcss/postcss postcss" />
+
+v4 has no `tailwind.config.js`. The plugin is the whole configuration.
+
+<CodeBlock language="javascript" title="postcss.config.mjs" code={`const config = {
+  plugins: ["@tailwindcss/postcss"],
+};
+
+export default config;`} />
+
+<CodeBlock language="css" title="src/app/globals.css" code={`@import "tailwindcss";`} />
+
+</Step>
+
+<Step step={2} title="Define the semantic tokens">
+
+Components are written against shadcn's names. If your project does not already
+have them, this is the minimum set — with whatever values suit your design. The
+ones below are neutral placeholders, not Keizoku's.
+
+<CodeBlock language="css" title="src/app/globals.css" code={`:root {
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --accent: oklch(0.97 0 0);
+  --accent-foreground: oklch(0.205 0 0);
+  --border: oklch(0.922 0 0);
+  --radius: 0.625rem;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-border: var(--border);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+}`} />
+
+A `.dark` block with the same names flipped gives you dark mode. Components
+read these; they never define them.
+
+</Step>
+
+<Step step={3} title="Add the motion variables">
+
+The one thing Keizoku brings that shadcn does not. The CLI merges this for you
+on install; paste it if you are copying source by hand.
+
+<CodeBlock language="css" title="src/app/globals.css" code={`:root {
+  --k-dur-1: 120ms;
+  --k-dur-2: 200ms;
+  --k-dur-3: 320ms;
+  --k-dur-draw: 640ms;
+  --k-ease-travel: cubic-bezier(0.65, 0, 0.35, 1);
+  --k-ease-draw: linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --k-dur-1: 0.01ms;
+    --k-dur-2: 0.01ms;
+    --k-dur-3: 0.01ms;
+    --k-dur-draw: 0.01ms;
+  }
+}`} />
+
+</Step>
+
+<Step step={4} title="Create the cn helper" copyText="npm install clsx tailwind-merge">
+
+`clsx` resolves conditional class names; `tailwind-merge` resolves conflicts
+between them, so a `className` prop can override a component's own classes
+instead of fighting them. Components pass position, spacing and colour classes
+through this on purpose — it is what makes `<Navbar className="absolute" />`
+work.
+
+<CodeBlock code="npm install clsx tailwind-merge" />
+
+<CodeBlock language="typescript" title="src/lib/utils.ts" code={`import { clsx, type ClassValue } from "clsx";
+import { twMerge } from "tailwind-merge";
+
+export function cn(...inputs: ClassValue[]) {
+  return twMerge(clsx(inputs));
+}`} />
+
+</Step>
+
+<Step step={5} title="Install the shared runtime" copyText="npm install motion lucide-react">
+
+<CodeBlock code="npm install motion lucide-react" />
+
+| Package | Why |
+| --- | --- |
+| `motion` | clip wipes and travelling rules; only components that animate import it |
+| `lucide-react` | icons, at 1.5px stroke to match the hairline weight |
+
+Individual components may pull one more — `next-themes` for `ModeToggle`, for
+instance. Each component page lists its own under *Install manually*.
+
+</Step>

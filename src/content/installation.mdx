@@ -1,0 +1,101 @@
+---
+title: Installation
+description: Three commands from an empty folder to a Keizoku component on the page.
+---
+
+import { CodeBlock, Step } from "@/components/docs/code-block"
+import { CLICommand } from "@/components/docs/cli-command"
+
+# Installation
+
+Keizoku components read your project's own shadcn tokens — `background`,
+`foreground`, `border`, `muted`, `primary`. There is no palette to paste in
+first and nothing to import: a component lands already themed to whatever your
+project already looks like.
+
+If you have a shadcn project, skip to [step 3](#add-a-component).
+
+<Step step={1} title="Create the project" copyText="npx create-next-app@latest my-app --typescript --tailwind --eslint --app --src-dir --import-alias '@/*'">
+
+<CodeBlock code="npx create-next-app@latest my-app --typescript --tailwind --eslint --app --src-dir --import-alias '@/*'" />
+
+The flags matter: `--typescript` because components ship typed props,
+`--src-dir` and `--import-alias '@/*'` because every import inside a component
+is written as `@/components/…`.
+
+<CodeBlock code="cd my-app" />
+
+</Step>
+
+<Step step={2} title="Initialise shadcn" copyText="npx shadcn@latest init">
+
+<CodeBlock code="npx shadcn@latest init" />
+
+This writes `components.json`, sets up the Tailwind v4 token layer in your
+global stylesheet, and creates the `cn` helper at `@/lib/utils`. Pick any base
+colour you like — Keizoku does not care which, and does not overwrite it.
+
+Doing it by hand instead? See [Manual setup](/docs/manual-setup).
+
+</Step>
+
+<Step step={3} title="Add a component" id="add-a-component">
+
+<CLICommand componentName="navbar" />
+
+The CLI writes the component and every file it imports into your project,
+installs the npm packages it needs, and merges in the six motion variables
+Keizoku animates on. That is the whole install — no provider, no stylesheet
+import, no token block.
+
+</Step>
+
+<Step step={4} title="Install by name, optionally">
+
+Register the namespace once and you can drop the URL.
+
+<CodeBlock language="json" title="components.json" code={`{
+  "registries": {
+    "@keizoku": "https://keizoku.akkki.tech/r/{name}.json"
+  }
+}`} />
+
+<CodeBlock code="npx shadcn@latest add @keizoku/ruled-section" />
+
+</Step>
+
+## What gets added to your CSS
+
+Only this, and only the first time:
+
+<CodeBlock language="css" title="src/app/globals.css" code={`:root {
+  --k-dur-1: 120ms;   /* ink change: hover, press, focus */
+  --k-dur-2: 200ms;   /* travel: pill slide, rail move, tabs */
+  --k-dur-3: 320ms;   /* reveal: clip wipe, panel open */
+  --k-dur-draw: 640ms;
+  --k-ease-travel: cubic-bezier(0.65, 0, 0.35, 1);
+  --k-ease-draw: linear;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --k-dur-1: 0.01ms;
+    --k-dur-2: 0.01ms;
+    --k-dur-3: 0.01ms;
+    --k-dur-draw: 0.01ms;
+  }
+}`} />
+
+Four durations and two curves. No colours, no radius, no font — nothing that
+can argue with your design. The reduced-motion floor is `0.01ms` rather than
+`0` so `transitionend` still fires and anything awaiting it does not hang.
+
+## Want the Keizoku look too?
+
+The components adapt to you by default. If you want it the other way round —
+warm paper, obsidian, one vermilion accent — that is a separate, optional
+command:
+
+<CodeBlock code='npx shadcn@latest add "https://keizoku.akkki.tech/r/theme.json"' />
+
+See [Theming](/docs/theming) for what it changes and how to take only part of it.

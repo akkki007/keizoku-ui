@@ -1,0 +1,93 @@
+---
+title: CLI
+description: Install Keizoku components with the shadcn CLI, or let an agent do it over MCP.
+---
+
+import { CodeBlock, Step } from "@/components/docs/code-block"
+import { CLICommand } from "@/components/docs/cli-command"
+
+# CLI
+
+Keizoku publishes a [shadcn-compatible registry](https://ui.shadcn.com/docs/registry).
+Every component is a JSON manifest at `https://keizoku.akkki.tech/r/<name>.json`
+holding its source, the files it imports, and the npm packages it needs.
+
+## Add a component
+
+<CLICommand componentName="navbar" />
+
+Or by name, once the registry is in `components.json`:
+
+<CodeBlock code="npx shadcn@latest add @keizoku/navbar" />
+
+The CLI writes the component to your `components` alias, writes each imported
+file to its own target — `@/lib/utils`, `@/components/ui/…` — and installs the
+dependencies. Files that already exist prompt before being overwritten.
+
+## Browse the registry
+
+The whole catalog is one document, which is also the fastest way to see what
+exists without leaving the terminal.
+
+<CodeBlock code="curl -s https://keizoku.akkki.tech/r/registry.json | jq '.items[].name'" />
+
+## MCP server
+
+The shadcn MCP server lets an AI assistant browse and install from registries
+in natural language — *"add the Keizoku navbar to this project"* — rather than
+you copying a URL.
+
+<Step step={1} title="Register the registry">
+
+<CodeBlock language="json" title="components.json" code={`{
+  "registries": {
+    "@keizoku": "https://keizoku.akkki.tech/r/{name}.json"
+  }
+}`} />
+
+</Step>
+
+<Step step={2} title="Initialise the server">
+
+<CodeBlock code="npx shadcn@latest mcp init" />
+
+</Step>
+
+<Step step={3} title="Point your client at it">
+
+<CodeBlock code="npx shadcn@latest mcp init --client claude" />
+
+Swap `claude` for `cursor`, `vscode` or `codex` depending on where you work.
+Restart the client afterwards — most read their MCP config only at startup.
+
+</Step>
+
+## Manifest shape
+
+Useful if you are writing tooling against the registry rather than using the
+CLI.
+
+| Field | Contains |
+| --- | --- |
+| `name` | the registry name, matching the URL |
+| `type` | `registry:ui` for primitives, `registry:block` for composed components, `registry:theme` for the palette |
+| `dependencies` | npm packages to install; `react`, `react-dom` and `next` are assumed |
+| `files[]` | `path`, `target`, `type` and full `content` for every file |
+| `css` | merged into your stylesheet — for components, only the six motion variables |
+| `cssVars` | `theme` / `light` / `dark` variables; used by the theme item, empty on components |
+| `docs` | install notes shown after the CLI finishes |
+| `meta.remoteAssets` | absolute URLs for demo media that stays on this host |
+
+Manifests are generated from source on every build by
+`scripts/build-registry.ts`, which walks each component's imports through the
+TypeScript AST. A component and its documented source cannot drift apart,
+because they are the same files. The theme item is read out of
+`src/styles/keizoku.css` the same way.
+
+## The theme item
+
+`theme` is not a component — it carries no files, only `cssVars`. Adding it
+rewrites your palette to Keizoku's; leaving it out means components adopt
+yours. See [Theming](/docs/theming).
+
+<CodeBlock code='npx shadcn@latest add "https://keizoku.akkki.tech/r/theme.json"' />

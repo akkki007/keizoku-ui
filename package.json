@@ -3,11 +3,14 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
+    "predev": "npm run registry:build",
     "dev": "next dev",
-    "build": "next build",
+    "build": "npm run registry:build && next build",
+    "postbuild": "pagefind --site .next/server/app --output-path public/_pagefind",
     "start": "next start",
     "lint": "eslint .",
     "typecheck": "next typegen && tsc --noEmit",
+    "registry:build": "tsx scripts/build-registry.ts",
     "check": "npm run lint && npm run typecheck && npm run build"
   },
   "dependencies": {
@@ -16,6 +19,9 @@
     "motion": "^12.24.12",
     "next": "16.3.4",
     "next-themes": "^0.4.6",
+    "nextra": "4.6.1",
+    "nextra-theme-docs": "4.6.1",
+    "prism-react-renderer": "^2.4.1",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "tailwind-merge": "^3.4.0"
@@ -27,8 +33,18 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "16.3.4",
+    "pagefind": "^1.5.2",
     "tailwindcss": "^4",
+    "tsx": "^4",
     "typescript": "^5"
+  },
+  "overrides": {
+    "nextra": {
+      "zod": "4.3.6"
+    },
+    "nextra-theme-docs": {
+      "zod": "4.3.6"
+    }
   },
   "engines": {
     "node": ">=22.12.0"

@@ -1,0 +1,161 @@
+---
+title: Theming
+description: Keizoku's palette is optional. What the theme item changes, and how to take only part of it.
+---
+
+import { CodeBlock, Step } from "@/components/docs/code-block"
+import { TokensSource } from "@/components/docs/tokens-source"
+
+# Theming
+
+Components ship with no palette. They read `background`, `foreground`,
+`border`, `muted`, `primary` and `accent` from your project, so a Keizoku
+navbar in a blue product looks like that product's navbar, not like this site.
+
+The look on this site is a separate thing you can opt into.
+
+## Take the whole theme
+
+<CodeBlock code='npx shadcn@latest add "https://keizoku.akkki.tech/r/theme.json"' />
+
+The CLI writes the values into your own stylesheet — the warm `sumi` neutral
+ramp, the vermilion `shu` accent, both themes, and a 6px `--radius`. Nothing is
+imported and nothing is hidden: afterwards it is your CSS, and you edit it.
+
+<CodeBlock language="css" title="what lands in src/app/globals.css" code={`:root {
+  --sumi-50: oklch(0.985 0.002 85);   /* warm paper */
+  /* … the full ramp, 50 → 1000 */
+  --shu-500: oklch(0.62 0.19 35);     /* 朱色 — the single accent */
+
+  --background: var(--sumi-50);
+  --foreground: var(--sumi-950);
+  --muted: var(--sumi-100);           /* the frame */
+  --card: oklch(1 0 0);               /* the inset child */
+  --border: oklch(0 0 0 / 0.12);      /* one weight, one colour */
+  --radius: 0.375rem;                 /* surfaces at 6px */
+}`} />
+
+It does **not** touch your fonts. Font variables would point at names your
+project does not define, so that stays a decision you make — see
+[Type](#type) below.
+
+## Take part of it
+
+The theme is ordinary CSS variables, so overriding one is one line. A few worth
+knowing:
+
+| Variable | What moves |
+| --- | --- |
+| `--background` / `--foreground` | the page and its text |
+| `--muted` | the frame around every framed card |
+| `--card` | the inset child inside that frame |
+| `--border` | every drawn rule and every card edge — they share one weight |
+| `--radius` | surfaces; controls stay at `rounded-full` regardless |
+| `--ring` | the focus outline |
+| `--meta` | the third text level, for mono labels and counts |
+| `--brand` | the one accent |
+
+Radius contrast is the signature that survives a palette swap: surfaces take
+`--radius`, controls stay fully round. Set `--radius: 0` and you get a squared
+Keizoku; set it to `1rem` and the controls still read as pills against it.
+
+## Type
+
+Geist carries display and body; **Geist Mono carries every piece of meta text** —
+labels, dates, counts, coordinates, status. That pairing is doing most of the
+identity work, and two grotesks would read as a mistake.
+
+<Step step={1} title="Load the fonts">
+
+<CodeBlock language="tsx" title="src/app/layout.tsx" code={`import { Geist, Geist_Mono } from "next/font/google";
+
+const geist = Geist({ subsets: ["latin"], variable: "--font-geist", display: "swap" });
+const geistMono = Geist_Mono({ subsets: ["latin"], variable: "--font-geist-mono", display: "swap" });`} />
+
+</Step>
+
+<Step step={2} title="Point the token at them">
+
+<CodeBlock language="css" title="src/app/globals.css" code={`:root {
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, monospace;
+}
+
+@theme inline {
+  --font-sans: var(--font-sans);
+  --font-mono: var(--font-mono);
+}`} />
+
+</Step>
+
+## Dark mode
+
+Components decide nothing about which theme is active; they read `.dark` on the
+document like any shadcn component. `ModeToggle` is the only one that needs a
+provider.
+
+<Step step={1} title="Install next-themes" copyText="npm install next-themes">
+
+<CodeBlock code="npm install next-themes" />
+
+</Step>
+
+<Step step={2} title="Mount the provider">
+
+<CodeBlock language="tsx" title="src/components/theme-provider.tsx" code={`"use client";
+
+import { ThemeProvider as NextThemesProvider } from "next-themes";
+
+export function ThemeProvider({ children }: { children: React.ReactNode }) {
+  return (
+    <NextThemesProvider
+      attribute="class"
+      defaultTheme="dark"
+      enableSystem
+      /* A theme flip changes colour, background and border on nearly every
+         element at once. Without this, every transition on those properties
+         fires together and the switch smears instead of snapping. */
+      disableTransitionOnChange
+    >
+      {children}
+    </NextThemesProvider>
+  );
+}`} />
+
+<CodeBlock language="tsx" title="src/app/layout.tsx" code={`<html lang="en" className={\`\${geist.variable} \${geistMono.variable}\`} suppressHydrationWarning>
+  <body>
+    <ThemeProvider>{children}</ThemeProvider>
+  </body>
+</html>`} />
+
+`suppressHydrationWarning` is required and is not a workaround: `next-themes`
+writes the class before paint, so the server markup never matches. It suppresses
+the warning on that one element only.
+
+</Step>
+
+## Motion
+
+Four durations and two curves arrive with the first component you install — no
+colour, no opinion. They are the one thing Keizoku insists on, because the
+components animate against them.
+
+| Token | Value | For |
+| --- | --- | --- |
+| `--k-dur-1` | 120ms | ink change: hover, press, focus |
+| `--k-dur-2` | 200ms | travel: pill slide, rail move, tabs |
+| `--k-dur-3` | 320ms | reveal: clip wipe, panel open, accordion |
+| `--k-dur-draw` | 640ms | rules drawing themselves in, once, on entry |
+| `--k-ease-travel` | `cubic-bezier(0.65, 0, 0.35, 1)` | symmetric, so movement reads as a carriage on a track |
+| `--k-ease-draw` | `linear` | a pen does not ease |
+
+There is no blur scale, no spring and no press-scale, on purpose. Retune the
+durations freely — every component picks them up — but adding a bounce curve
+here will make the components look like a different library.
+
+## The source
+
+This is the stylesheet this site runs on, read at build time. The theme item
+above is generated from it, so the two cannot drift.
+
+<TokensSource />

@@ -1,0 +1,135 @@
+---
+title: Navbar
+description: A five-slice bar whose centre dips into a notch, outlined by a pair of hairlines.
+---
+
+import { ComponentPreview } from "@/components/docs/component-preview"
+import { CLICommand } from "@/components/docs/cli-command"
+import { CodeBlock, Step } from "@/components/docs/code-block"
+import { PropsTable } from "@/components/docs/props-table"
+import { NavbarDemo } from "@/components/docs/demos/navbar-demo"
+
+# Navbar
+
+A fixed header whose hairline runs the full width of the viewport, drops 24px
+through the centre slice and comes back up — one unbroken rule interrupted by
+a control. Drawn as SVG strokes rather than borders, because a border cannot
+bend.
+
+<ComponentPreview
+  label="Navbar"
+  component={<NavbarDemo />}
+  previewClassName="!p-0 items-start"
+  code={`import { Navbar } from "@/components/block/navbar"
+
+export function Demo() {
+  return (
+    <Navbar
+      leftLinks={[
+        { label: "Components", href: "/docs" },
+        { label: "Templates", href: "/templates" },
+      ]}
+      rightLinks={[
+        { label: "Playground", href: "/playground" },
+        { label: "Docs", href: "/docs" },
+      ]}
+    />
+  )
+}`}
+/>
+
+Toggle the theme in the bar above — one component, both modes. It carries no
+colours of its own: `background`, `foreground`, `muted-foreground` and `border`
+come from whatever project it is installed into.
+
+## Install using CLI
+
+<CLICommand componentName="navbar" />
+
+## Install manually
+
+<Step step={1} title="Install dependencies" copyText="npm install motion lucide-react next-themes clsx tailwind-merge">
+
+<CodeBlock code="npm install motion lucide-react next-themes clsx tailwind-merge" />
+
+`next-themes` comes in through `ModeToggle`, which the navbar renders by
+default. Pass `actions={null}` and you can drop it.
+
+</Step>
+
+<Step step={2} title="Check your setup">
+
+The navbar reads `background`, `foreground`, `muted-foreground`, `border`,
+`accent` and `popover` from your project, plus the `cn` helper at
+`@/lib/utils`. A shadcn project already has all of it; if yours does not, see
+[Manual setup](/docs/manual-setup).
+
+</Step>
+
+<Step step={3} title="Copy the source" source="navbar">
+
+Two files: the navbar at `components/block/navbar.tsx` and the mode toggle it
+renders at `components/ui/mode-toggle.tsx`.
+
+</Step>
+
+## Usage
+
+<CodeBlock language="tsx" title="src/app/layout.tsx" code={`import { Navbar } from "@/components/block/navbar"
+
+export default function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <>
+      <Navbar
+        brand="継続"
+        brandHref="/"
+        leftLinks={[{ label: "Components", href: "/docs" }]}
+        rightLinks={[{ label: "Docs", href: "/docs" }]}
+      />
+      {/* The bar is fixed at 64px; offset whatever follows it. */}
+      <main className="pt-16">{children}</main>
+    </>
+  )
+}`} />
+
+### Custom actions
+
+`actions` replaces the trailing controls. Anything passed here also renders in
+the mobile row, where it balances the menu button and keeps the brand optically
+centred.
+
+<CodeBlock language="tsx" code={`<Navbar
+  rightLinks={[{ label: "Docs", href: "/docs" }]}
+  actions={
+    <a
+      href="/login"
+      className="rounded-full border border-border px-4 py-1.5 text-[13px] text-muted-foreground transition-colors duration-[var(--k-dur-1)] hover:text-foreground"
+    >
+      Sign in
+    </a>
+  }
+/>`} />
+
+Pass `actions={null}` to remove them, and the divider with them.
+
+## Props
+
+<PropsTable
+  data={[
+    { prop: "brand", type: "React.ReactNode", defaultValue: '"継続"', description: "Sits in the centre of the notch. A wordmark, an SVG logo, anything." },
+    { prop: "brandHref", type: "string", defaultValue: '"/"', description: "Where the brand links to." },
+    { prop: "leftLinks", type: "NavItem[]", defaultValue: "[]", description: "Links left of the brand. Hidden below md, where they move into the panel." },
+    { prop: "rightLinks", type: "NavItem[]", defaultValue: "[]", description: "Links right of the brand. Same responsive behaviour." },
+    { prop: "actions", type: "React.ReactNode", defaultValue: "<ModeToggle />", description: "Trailing controls, after a divider. null removes both." },
+    { prop: "className", type: "string", description: "Merged onto the header. Use it to override position — the demo above swaps fixed for absolute." },
+  ]}
+/>
+
+`NavItem` is `{ label: string; href: string }`.
+
+## Notes
+
+- **Height is 64px**, and the visible band ends at the hairline around y=62. Offset the page by `pt-16` and the first element sits on the rule rather than under it.
+- **The mobile panel is uncovered, not faded** — a `clip-path` inset travelling from the top edge over `--k-dur-3`. Under `prefers-reduced-motion` it becomes an opacity change with no travel.
+- **Escape closes the panel** and returns focus to the menu button.
+- **Hover is a 120ms ink change.** No underline slide, no scale. If you want movement in the bar, put it in the rule, not in the links.

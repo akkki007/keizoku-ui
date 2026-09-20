@@ -1,0 +1,214 @@
+/* Nextra ships its own prefixed Tailwind build. Rather than fight it, this
+   re-points its colour variables at the Keizoku token layer, so the docs
+   chrome is the same warm achromatic ramp as the library it documents.
+
+   Nextra's ramps are monotonic in the same direction as `sumi`, and its dark
+   styles reach for the light end of the ramp, so one mapping serves both
+   themes — only the page background flips. */
+
+.keizoku-docs {
+  /* Our own bar is fixed at 64px and Nextra offsets its sidebar and TOC
+     from this value. */
+  --nextra-navbar-height: 64px;
+  /* Sidebar (256) + TOC (256) + the article's own 96px of padding come out
+     of this, so the reading column is roughly 830px at this width. */
+  --nextra-content-width: 1440px;
+
+  --x-color-nextra-bg: var(--background);
+
+  --x-color-gray-50: var(--sumi-50);
+  --x-color-gray-100: var(--sumi-100);
+  --x-color-gray-200: var(--sumi-200);
+  --x-color-gray-300: var(--sumi-300);
+  --x-color-gray-400: var(--sumi-400);
+  --x-color-gray-500: var(--sumi-500);
+  --x-color-gray-600: var(--sumi-600);
+  --x-color-gray-700: var(--sumi-700);
+  --x-color-gray-800: var(--sumi-800);
+  --x-color-gray-900: var(--sumi-900);
+
+  --x-color-neutral-50: var(--sumi-50);
+  --x-color-neutral-200: var(--sumi-200);
+  --x-color-neutral-300: var(--sumi-300);
+  --x-color-neutral-400: var(--sumi-400);
+  --x-color-neutral-500: var(--sumi-500);
+  --x-color-neutral-600: var(--sumi-600);
+  --x-color-neutral-700: var(--sumi-700);
+  --x-color-neutral-800: var(--sumi-800);
+  --x-color-neutral-900: var(--sumi-900);
+
+  --x-color-slate-50: var(--sumi-50);
+  --x-color-slate-100: var(--sumi-100);
+  --x-color-slate-200: var(--sumi-200);
+  --x-color-slate-700: var(--sumi-700);
+  --x-color-slate-900: var(--sumi-900);
+
+  /* One accent, used where Nextra expects a brand hue: links, the active
+     sidebar entry, the active TOC entry. */
+  --x-color-primary-50: var(--muted);
+  --x-color-primary-100: var(--muted);
+  --x-color-primary-200: var(--muted);
+  --x-color-primary-300: var(--shu-300);
+  --x-color-primary-400: var(--shu-400);
+  --x-color-primary-500: var(--brand);
+  --x-color-primary-600: var(--brand-text);
+  --x-color-primary-700: var(--brand-text);
+  --x-color-primary-800: var(--brand-text);
+
+  /* The site bar is fixed and therefore out of flow; Nextra positions its
+     sticky sidebar and TOC against the same value. */
+  padding-top: var(--nextra-navbar-height);
+
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* ── Chrome ─────────────────────────────────────────────────────────── */
+
+/* Sidebar and TOC are separated from the content by the house hairline,
+   not by a background change. */
+.keizoku-docs aside.nextra-sidebar,
+.keizoku-docs nav.nextra-toc {
+  font-size: 13px;
+}
+
+.keizoku-docs .nextra-sidebar a,
+.keizoku-docs .nextra-toc a {
+  border-radius: 999px;
+  transition:
+    color var(--k-dur-1) var(--k-ease-travel),
+    background-color var(--k-dur-1) var(--k-ease-travel);
+}
+
+/* Separators between sidebar groups are the same 1px/4-4 dash as every
+   other rule in the library. */
+.keizoku-docs .nextra-sidebar hr,
+.keizoku-docs hr {
+  height: 1px;
+  border: 0;
+  background: repeating-linear-gradient(
+    to right,
+    var(--border) 0 4px,
+    transparent 4px 8px
+  );
+}
+
+/* ── Content ────────────────────────────────────────────────────────── */
+
+.keizoku-docs h1 {
+  font-size: clamp(2rem, 4vw, 2.5rem);
+  font-weight: 500;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.keizoku-docs h2 {
+  margin-top: 3rem;
+  padding-top: 1.5rem;
+  border-top: 0;
+  font-size: 1.125rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  background: repeating-linear-gradient(
+      to right,
+      var(--border) 0 4px,
+      transparent 4px 8px
+    )
+    top left / 100% 1px no-repeat;
+}
+
+.keizoku-docs h3 {
+  font-size: 0.95rem;
+  font-weight: 500;
+  letter-spacing: -0.01em;
+}
+
+.keizoku-docs p,
+.keizoku-docs li {
+  color: var(--muted-foreground);
+}
+
+/* Inline code, distinct from a fenced block: no frame, just a wash. */
+.keizoku-docs :not(pre) > code {
+  padding: 0.15em 0.4em;
+  border-radius: 4px;
+  background: var(--muted);
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 0.85em;
+}
+
+/* Nextra renders fenced code inside our own framed card, so its own
+   surface, border and padding come off. */
+.keizoku-docs .docs-code-block pre {
+  margin: 0;
+  padding: 1rem;
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  background: var(--card);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  line-height: 1.6;
+}
+
+.keizoku-docs .docs-code-block-nested pre {
+  border: 0;
+  border-radius: 0;
+  padding: 0;
+  background: transparent;
+}
+
+.keizoku-docs .docs-code-block pre code {
+  font-family: var(--font-mono);
+}
+
+/* Nextra's own copy button and word-wrap control are replaced by the
+   shared one in DocsCodeBlock. */
+.keizoku-docs .docs-code-block .nextra-copy-btn,
+.keizoku-docs .docs-code-block .nextra-button {
+  display: none;
+}
+
+/* Nextra's mobile panel starts under the site bar; the docs toggle sits in
+   that same band, so the panel's content clears both. */
+.keizoku-docs .nextra-mobile-nav {
+  padding-top: calc(var(--nextra-navbar-height) + 40px);
+}
+
+/* Nextra's search input, restyled: a pill control against square surfaces,
+   the radius contrast the library runs on. */
+.keizoku-docs .nextra-search input {
+  height: 32px;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  background: transparent;
+  color: var(--foreground);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  transition: border-color var(--k-dur-1) var(--k-ease-travel);
+}
+
+.keizoku-docs .nextra-search input::placeholder {
+  color: var(--meta);
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+  font-size: 11px;
+}
+
+.keizoku-docs .nextra-search input:focus {
+  border-color: var(--border);
+}
+
+/* The results popover is a framed surface, not an elevated one. */
+.keizoku-docs .nextra-search ul {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  box-shadow: none;
+}
+
+/* The rail search sits in a 40px band, so its results popover has to clear
+   the bar rather than start inside it. */
+.keizoku-docs .nextra-search ul {
+  margin-top: 8px;
+}

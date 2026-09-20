@@ -1,0 +1,72 @@
+---
+title: Introduction
+description: What Keizoku UI is, how it is distributed, and what it refuses to do.
+---
+
+import { CLICommand } from "@/components/docs/cli-command"
+
+# Keizoku UI
+
+**継続 — continuation.** A React component library where the layout system is
+the ornament: drawn, not implied.
+
+Most component libraries hide their grid and put their personality in effects.
+Keizoku inverts that. The grid is visible, ruled, and unbroken down the length
+of the page; components hang off it. Spectacle is built from **layout**, never
+from blur, glow or shaders.
+
+## How it ships
+
+Keizoku is not an npm package, and there is no `<KeizokuProvider>`. Components
+are installed into your project as source files you own and edit, through the
+[shadcn](https://ui.shadcn.com) CLI:
+
+<CLICommand componentName="navbar" />
+
+The command reads a manifest from this site, writes the component and every
+file it imports into your project, and installs the npm dependencies it needs.
+Nothing is hidden behind a version number — after it runs, the code is yours.
+
+## What you need
+
+A Tailwind v4 project with shadcn initialised. That is the whole prerequisite —
+[Installation](/docs/installation) walks it in three commands, or
+[Manual setup](/docs/manual-setup) does it without the CLI.
+
+**There is no token file to paste in.** Components are written against the
+shadcn names your project already defines — `background`, `foreground`,
+`border`, `muted`, `primary` — so one arrives themed to whatever your product
+already looks like, rather than dragging this site's palette in with it. The
+only CSS a component brings is six motion variables, and the CLI merges those
+for you.
+
+If you want the warm-paper look as well, that is
+[one optional command](/docs/theming).
+
+## What it commits to
+
+- **Drawn structure** — dashed and hairline rules are first-class ornament, on one grid, one weight, one colour
+- **Achromatic UI, content-coloured page** — chrome is warm grayscale; colour enters through photography, brand marks, syntax
+- **The label gutter** — a left rail carrying section labels outside the content column
+- **Framed surfaces** — a 4px inset child inside every card
+- **Radius contrast** — surfaces at 6px, controls at 999px, never reconciled
+- **Mono for meta** — labels, dates, counts, coordinates and status in uppercase letter-spaced monospace
+- **Mechanical motion** — clip, wipe, draw, snap. Drafting-instrument behaviour.
+
+## What it refuses
+
+Blur as a motion channel. Springs and bounce. Press-scale. Elevation shadows
+and glow. Gradient meshes. More than one accent colour. A uniform radius. One
+type family doing every job. WebGL, shaders and particles.
+
+These are not oversights, and requests to add them are the one kind of issue
+that gets closed. A component that could ship in any library has no point of
+view.
+
+## The standing risk
+
+Drawn rules are the riskiest decision here: lines read as noise the moment they
+compete with spacing. Keizoku survives it by discipline, not by licence.
+
+> **One grid. One weight. One colour. One dash pattern.**
+> A second rule weight anywhere is a bug, not a variation.

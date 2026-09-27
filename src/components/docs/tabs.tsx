@@ -78,7 +78,7 @@ export function Tabs<T extends string>({
               <motion.span
                 aria-hidden
                 layoutId={`${groupId}-indicator`}
-                className="absolute inset-x-2 bottom-0 h-px bg-ink"
+                className="absolute inset-x-2 bottom-0 h-px bg-foreground"
                 transition={{ duration: 0.2, ease: [0.65, 0, 0.35, 1] }}
               />
             )}

@@ -134,7 +134,7 @@ export function Hero() {
         >
           <Link
             href="/docs/ruled-section"
-            className="group inline-flex items-center gap-2 rounded-full bg-ink px-6 py-3 text-[15px] font-medium text-page transition-opacity duration-200 hover:opacity-90 active:scale-[0.98]"
+            className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[15px] font-medium text-primary-foreground transition-opacity duration-200 hover:opacity-90 active:scale-[0.98]"
           >
             Browse components
             <span className="transition-transform duration-200 group-hover:translate-x-0.5">

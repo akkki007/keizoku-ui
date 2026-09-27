@@ -1,0 +1,157 @@
+---
+title: Socials
+description: A ruled rail of brand marks that spreads under the cursor and raises a label.
+---
+
+import { ComponentPreview } from "@/components/docs/component-preview"
+import { CLICommand } from "@/components/docs/cli-command"
+import { CodeBlock, Step } from "@/components/docs/code-block"
+import { PropsTable } from "@/components/docs/props-table"
+import { SocialsDemo } from "@/components/docs/demos/socials-demo"
+
+# Socials
+
+A single rounded rail holding grouped brand marks, split by the house hairline.
+Hovering a mark pushes its neighbours aside and raises its name above the rail.
+
+<ComponentPreview
+  label="Socials"
+  component={<SocialsDemo />}
+  previewClassName="!px-0"
+  code={`import { Socials } from "@/components/ui/socials"
+
+export function Demo() {
+  return (
+    <Socials
+      label="Find me on"
+      groups={[
+        [
+          { label: "LinkedIn", href: "https://linkedin.com", icon: <img src="/socials/linkedin.png" alt="" /> },
+          { label: "Telegram", href: "https://telegram.org", icon: <img src="/socials/telegram.png" alt="" /> },
+          { label: "Email", href: "mailto:hello@example.com", icon: <img src="/socials/mail.png" alt="" /> },
+        ],
+        [
+          { label: "Fiverr", href: "https://fiverr.com", icon: <img src="/socials/fiverr.png" alt="" /> },
+          { label: "X", href: "https://x.com", icon: <img src="/socials/x.png" alt="" /> },
+        ],
+      ]}
+    />
+  )
+}`}
+/>
+
+The spread is built from layout, not from a transform. The hovered item takes
+extra horizontal margin and the flex row pushes everything else aside; because
+the rail is centred and grows symmetrically, the mark under the cursor stays
+where it is while the rest of the row moves away from it. A scale-up would grow
+the icon *under* the pointer and risk pulling the target out from beneath it.
+Nothing blurs, springs or shrinks.
+
+## Install using CLI
+
+<CLICommand componentName="socials" />
+
+## Install manually
+
+<Step step={1} title="Install dependencies" copyText="npm install clsx tailwind-merge">
+
+<CodeBlock code="npm install clsx tailwind-merge" />
+
+No motion dependency — the whole interaction is CSS transitions on the motion
+variables the CLI installs alongside the component.
+
+</Step>
+
+<Step step={2} title="Copy the source" source="socials">
+
+The component reads `border` for the rule and `primary` / `primary-foreground`
+for the label. It carries no colour of its own: everything you see comes from
+the marks you pass it.
+
+</Step>
+
+## Usage
+
+### Groups and the rule
+
+Each array in `groups` is drawn as a run of marks, with a hairline between one
+run and the next. Pass a single group for an undivided rail.
+
+<CodeBlock language="tsx" code={`<Socials
+  label="Find me on"
+  groups={[
+    [linkedin, telegram, email],   // contact
+    [ddb, freelance, aiDev, fiverr, x],  // work
+  ]}
+/>`} />
+
+### Icons
+
+`icon` is a `ReactNode`, not a URL, so the mark can be anything — a raster
+logo, an inline SVG, a framework image component. Whatever you pass is sized
+to fill a square box and clipped to the rail's radius, so square and
+pre-rounded artwork sit together without looking mismatched.
+
+<CodeBlock language="tsx" code={`import Image from "next/image"
+
+const item = {
+  label: "Fiverr",
+  href: "https://fiverr.com",
+  icon: <Image src="/socials/fiverr.png" alt="" width={92} height={92} />,
+}
+
+// or an icon component
+const github = {
+  label: "GitHub",
+  href: "https://github.com",
+  icon: <GithubIcon />,
+}`} />
+
+### Sizing
+
+Every measurement derives from one variable, so the rail scales as a unit.
+`--rail-icon` defaults to `clamp(48px, 7vw, 92px)` and needs no breakpoints —
+92px on a wide screen, never below a comfortable 48px touch target. Pass `size`
+to pin it.
+
+<CodeBlock language="tsx" code={`<Socials size={64} groups={groups} />
+
+// or override the variable directly, per breakpoint
+<Socials
+  style={{ "--rail-icon": "clamp(56px, 9vw, 120px)" } as React.CSSProperties}
+  groups={groups}
+/>`} />
+
+Below the point where the rail stops fitting, it scrolls sideways rather than
+shrinking its marks past a usable target. The scroll container carries the
+label's headroom, so a raised label is never clipped.
+
+## Props
+
+<PropsTable
+  caption="Socials"
+  data={[
+    { prop: "groups", type: "SocialItem[][]", description: "Each array is a run of marks; a hairline separates one run from the next." },
+    { prop: "label", type: "string", defaultValue: '"Social links"', description: "Accessible name for the rail's nav landmark." },
+    { prop: "size", type: "number", description: "Icon edge in pixels. Omit for the responsive clamp." },
+    { prop: "className", type: "string", description: "Merged onto the rail itself, not the scroll container." },
+  ]}
+/>
+
+<PropsTable
+  caption="SocialItem"
+  data={[
+    { prop: "label", type: "string", description: "Accessible name for the link, and the text of the hover label." },
+    { prop: "href", type: "string", description: "Destination. mailto: and tel: work as well as URLs." },
+    { prop: "icon", type: "React.ReactNode", description: "Rendered in a square, rounded, clipped box. Images fill and crop." },
+    { prop: "external", type: "boolean", description: "Open in a new tab. Defaults to true for absolute http(s) URLs." },
+  ]}
+/>
+
+## Notes
+
+- **The label is decoration; the link carries the name.** Each mark's accessible name comes from a visually hidden span, and the raised label is `aria-hidden` — so a screen reader hears one link per mark rather than the name twice.
+- **Keyboard gets the same behaviour as the pointer.** `focus-within` spreads the row and `focus-visible` raises the label, so tabbing through the rail reads the same way hovering it does.
+- **Marks never shrink below 48px**, which keeps them above the minimum comfortable touch target. When the rail no longer fits, it scrolls.
+- **`external` defaults on for absolute URLs** and adds `rel="noreferrer noopener"`. Relative paths, `mailto:` and `tel:` stay in place.
+- **Under `prefers-reduced-motion`** the spread and the label resolve instantly — the motion variables floor at 0.01ms, so the states still change but nothing travels.

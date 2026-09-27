@@ -24,6 +24,11 @@ const meta = {
     title: "Navigation",
   },
   navbar: "Navbar",
+  "---5": {
+    type: "separator",
+    title: "Links & Media",
+  },
+  socials: "Socials",
 };
 
 export default meta;

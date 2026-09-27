@@ -1,0 +1,42 @@
+{
+  "$schema": "https://ui.shadcn.com/schema/registry-item.json",
+  "name": "socials",
+  "type": "registry:ui",
+  "dependencies": [
+    "clsx",
+    "tailwind-merge"
+  ],
+  "files": [
+    {
+      "path": "components/ui/socials.tsx",
+      "target": "@ui/socials.tsx",
+      "type": "registry:ui",
+      "content": "\"use client\";\n\nimport * as React from \"react\";\nimport { cn } from \"@/lib/utils\";\n\n/* A ruled rail of brand marks, grouped, with a label that rises on hover.\n *\n * The hover is built from layout, not from transform: the hovered item takes\n * extra horizontal margin and its neighbours are pushed aside by the flex row\n * itself. Because the rail is centred and grows symmetrically, the item under\n * the cursor stays put while the rest of the row spreads away from it — so\n * the pointer never loses the target it is hovering, which a scale-up on the\n * icon would risk. Nothing blurs, springs or shrinks.\n *\n * Every measurement derives from one variable, `--rail-icon`, so the rail\n * scales as a unit. It defaults to a clamp and needs no breakpoints; pass\n * `size` to pin it. Chrome comes from the host project's tokens — `border`\n * for the rule, `primary` for the label — so the only colour the component\n * carries is whatever the icons bring with them.\n */\n\nexport interface SocialItem {\n  /** Accessible name for the link, and the text of the hover label. */\n  label: string;\n  href: string;\n  /** Rendered inside a square, rounded, clipped box. An `<img>`, an SVG, an\n   *  `<Image>` — anything. Images are sized and cropped to fill. */\n  icon: React.ReactNode;\n  /** Defaults to opening in a new tab for absolute URLs. */\n  external?: boolean;\n}\n\nexport interface SocialsProps\n  extends Omit<React.ComponentPropsWithoutRef<\"nav\">, \"children\"> {\n  /** Each group is drawn as a run of icons; a hairline separates one from the\n   *  next. Pass a single group for an undivided rail. */\n  groups: SocialItem[][];\n  /** Accessible name for the rail. */\n  label?: string;\n  /** Icon edge in pixels. Omit for the responsive default. */\n  size?: number;\n}\n\nexport function Socials({\n  groups,\n  label = \"Social links\",\n  size,\n  className,\n  style,\n  ...props\n}: SocialsProps) {\n  return (\n    /* The scroll container carries the label's headroom so the rail can\n       overflow sideways on a narrow screen without clipping a raised label.\n       `w-max` plus `mx-auto` centres the rail while it fits and lets it\n       scroll once it does not — icons never shrink below a usable target. */\n    <div\n      className=\"w-full overflow-x-auto pb-1 pt-[calc(var(--rail-icon)*0.38)] [-ms-overflow-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden\"\n      style={\n        {\n          \"--rail-icon\": size ? `${size}px` : \"clamp(48px, 7vw, 92px)\",\n          ...style,\n        } as React.CSSProperties\n      }\n    >\n      <nav\n        aria-label={label}\n        className={cn(\n          \"mx-auto flex w-max items-center border border-border\",\n          \"gap-[calc(var(--rail-icon)*0.163)] rounded-[calc(var(--rail-icon)*0.26)]\",\n          \"px-[calc(var(--rail-icon)*0.152)] py-[calc(var(--rail-icon)*0.141)]\",\n          className,\n        )}\n        {...props}\n      >\n        {groups.map((group, index) => (\n          <React.Fragment key={index}>\n            {index > 0 && (\n              /* The rule between groups: one weight, one colour, drawn at the\n                 same 73% of the icon height the design sets it at. */\n              <span\n                aria-hidden\n                className=\"w-px shrink-0 self-center bg-border\"\n                style={{ height: \"calc(var(--rail-icon) * 0.728)\" }}\n              />\n            )}\n            <ul className=\"flex items-center gap-[calc(var(--rail-icon)*0.163)]\">\n              {group.map((item) => (\n                <SocialLink key={item.href + item.label} {...item} />\n              ))}\n            </ul>\n          </React.Fragment>\n        ))}\n      </nav>\n    </div>\n  );\n}\n\nfunction SocialLink({ label, href, icon, external }: SocialItem) {\n  const opensNewTab = external ?? /^https?:\\/\\//.test(href);\n\n  return (\n    <li\n      /* The spread. Margin rather than transform, so the row actually\n         relayouts and the neighbours move with it. `focus-within` gives the\n         keyboard the same behaviour the pointer gets. */\n      className={cn(\n        \"shrink-0 transition-[margin] duration-[var(--k-dur-2)] ease-[var(--k-ease-travel)]\",\n        \"hover:mx-[calc(var(--rail-icon)*0.174)]\",\n        \"focus-within:mx-[calc(var(--rail-icon)*0.174)]\",\n      )}\n    >\n      <a\n        href={href}\n        {...(opensNewTab ? { target: \"_blank\", rel: \"noreferrer noopener\" } : {})}\n        className=\"group/social relative block size-[var(--rail-icon)] rounded-[calc(var(--rail-icon)*0.25)] outline-offset-4\"\n      >\n        <span className=\"sr-only\">{label}</span>\n\n        {/* The label rises into the headroom above the rail. It travels and\n            resolves — no blur, no scale. */}\n        <span\n          aria-hidden\n          className={cn(\n            \"pointer-events-none absolute bottom-[calc(100%+var(--rail-icon)*0.29)] left-1/2 z-10 -translate-x-1/2\",\n            \"whitespace-nowrap rounded-full bg-primary text-primary-foreground\",\n            \"px-[calc(var(--rail-icon)*0.13)] py-[calc(var(--rail-icon)*0.033)]\",\n            \"text-[calc(var(--rail-icon)*0.12)] font-light leading-none tracking-[-0.04em]\",\n            \"translate-y-[calc(var(--rail-icon)*0.09)] opacity-0\",\n            \"transition-[opacity,translate] duration-[var(--k-dur-2)] ease-[var(--k-ease-travel)]\",\n            \"group-hover/social:translate-y-0 group-hover/social:opacity-100\",\n            \"group-focus-visible/social:translate-y-0 group-focus-visible/social:opacity-100\",\n          )}\n        >\n          {label}\n        </span>\n\n        {/* Icons arrive pre-rounded or square; clipping to the same radius\n            makes the run consistent either way. */}\n        <span className=\"block size-full overflow-hidden rounded-[calc(var(--rail-icon)*0.25)] [&_img]:size-full [&_img]:object-cover [&_svg]:size-full\">\n          {icon}\n        </span>\n      </a>\n    </li>\n  );\n}\n"
+    },
+    {
+      "path": "lib/utils.ts",
+      "target": "@lib/utils.ts",
+      "type": "registry:lib",
+      "content": "import { clsx, type ClassValue } from \"clsx\";\nimport { twMerge } from \"tailwind-merge\";\n\nexport function cn(...inputs: ClassValue[]) {\n  return twMerge(clsx(inputs));\n}\n"
+    }
+  ],
+  "css": {
+    ":root": {
+      "--k-dur-1": "120ms",
+      "--k-dur-2": "200ms",
+      "--k-dur-3": "320ms",
+      "--k-dur-draw": "640ms",
+      "--k-ease-travel": "cubic-bezier(0.65, 0, 0.35, 1)",
+      "--k-ease-draw": "linear"
+    },
+    "@media (prefers-reduced-motion: reduce)": {
+      ":root": {
+        "--k-dur-1": "0.01ms",
+        "--k-dur-2": "0.01ms",
+        "--k-dur-3": "0.01ms",
+        "--k-dur-draw": "0.01ms"
+      }
+    }
+  },
+  "docs": "This component reads your project's own shadcn tokens — background, foreground, border, muted — so it arrives already themed. For the warm-paper Keizoku palette instead, add the theme: npx shadcn@latest add \"https://keizoku.akkki.tech/r/theme.json\""
+}

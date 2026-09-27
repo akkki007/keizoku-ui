@@ -49,7 +49,9 @@ When porting any recipe:
 
 ## 3. Surfaces
 
-`better-ui` principle 3 says shadows for elevation, borders for structure. Keizoku keeps the second half and drops the first: **no elevation shadows.** Depth is expressed by rules, insets and at most a `1px` ring.
+`better-ui` principle 3 says shadows for elevation, borders for structure. Keizoku keeps the second half and drops the first: **no elevation shadows between opaque surfaces.** Depth is expressed by rules, insets and at most a `1px` ring.
+
+One exception, and it is a material one rather than a stylistic one: a genuinely translucent pane — the `socials` glass variant — may carry `backdrop-filter` and the ambient shadow a pane casts. See *Blur, precisely* in `docs/KEIZOKU.md`. This does not reopen shadow as a way of ranking two opaque cards.
 
 - Concentric radius (`outer = inner + padding`) still applies — it is geometry, not taste.
 - Radius *contrast* is a Keizoku signature: surfaces at `6px`, controls at `999px`. Do not unify them.

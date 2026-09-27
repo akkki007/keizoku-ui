@@ -7,7 +7,7 @@ import { ComponentPreview } from "@/components/docs/component-preview"
 import { CLICommand } from "@/components/docs/cli-command"
 import { CodeBlock, Step } from "@/components/docs/code-block"
 import { PropsTable } from "@/components/docs/props-table"
-import { SocialsDemo } from "@/components/docs/demos/socials-demo"
+import { SocialsDemo, SocialsGlassDemo } from "@/components/docs/demos/socials-demo"
 
 # Socials
 
@@ -47,18 +47,46 @@ where it is while the rest of the row moves away from it. A scale-up would grow
 the icon *under* the pointer and risk pulling the target out from beneath it.
 Nothing blurs, springs or shrinks.
 
+GSAP drives both the spread and the label, on one timeline per mark. It reads
+`--k-dur-2` and `--k-ease-travel` off the element rather than hardcoding
+either, so the rail retunes when the motion scale does — and the reduced-motion
+floor that ships with the component collapses the duration for free.
+`--k-ease-travel` is a cubic-bezier, so `CustomEase` reproduces it exactly
+instead of settling for the nearest `power` ease.
+
+## Glass
+
+The same rail on a translucent surface. It only earns its keep over something
+worth refracting — photography, a gradient, content scrolling underneath. Over
+a flat panel it reads as reduced opacity, not as a pane.
+
+<ComponentPreview
+  label="Socials · glass"
+  component={<SocialsGlassDemo />}
+  previewClassName="!p-0"
+  code={`<Socials
+  variant="glass"
+  groups={groups}
+  label="Find me on"
+/>`}
+/>
+
+The Telegram mark above carries a `badge`. The dot is `aria-hidden`, and its
+text joins the link's accessible name — a screen reader hears "Telegram — 2
+unread", not an unexplained decoration.
+
 ## Install using CLI
 
 <CLICommand componentName="socials" />
 
 ## Install manually
 
-<Step step={1} title="Install dependencies" copyText="npm install clsx tailwind-merge">
+<Step step={1} title="Install dependencies" copyText="npm install gsap clsx tailwind-merge">
 
-<CodeBlock code="npm install clsx tailwind-merge" />
+<CodeBlock code="npm install gsap clsx tailwind-merge" />
 
-No motion dependency — the whole interaction is CSS transitions on the motion
-variables the CLI installs alongside the component.
+`gsap` drives the spread and the label. It is the only component in the library
+that pulls it in — the rest animate on CSS transitions.
 
 </Step>
 
@@ -110,21 +138,21 @@ const github = {
 ### Sizing
 
 Every measurement derives from one variable, so the rail scales as a unit.
-`--rail-icon` defaults to `clamp(48px, 7vw, 92px)` and needs no breakpoints —
-92px on a wide screen, never below a comfortable 48px touch target. Pass `size`
-to pin it.
+`--rail-icon` defaults to `clamp(40px, 5vw, 56px)` and needs no breakpoints —
+56px on a wide screen, 40px on a phone. Pass `size` to pin it, or override the
+variable for a rail that runs larger than the default.
 
-<CodeBlock language="tsx" code={`<Socials size={64} groups={groups} />
+<CodeBlock language="tsx" code={`<Socials size={44} groups={groups} />
 
-// or override the variable directly, per breakpoint
+// or override the variable, for a rail that runs larger
 <Socials
-  style={{ "--rail-icon": "clamp(56px, 9vw, 120px)" } as React.CSSProperties}
+  style={{ "--rail-icon": "clamp(56px, 7vw, 92px)" } as React.CSSProperties}
   groups={groups}
 />`} />
 
 Below the point where the rail stops fitting, it scrolls sideways rather than
-shrinking its marks past a usable target. The scroll container carries the
-label's headroom, so a raised label is never clipped.
+shrinking its marks further. The scroll container carries the label's headroom,
+so a raised label is never clipped.
 
 ## Props
 
@@ -134,6 +162,7 @@ label's headroom, so a raised label is never clipped.
     { prop: "groups", type: "SocialItem[][]", description: "Each array is a run of marks; a hairline separates one run from the next." },
     { prop: "label", type: "string", defaultValue: '"Social links"', description: "Accessible name for the rail's nav landmark." },
     { prop: "size", type: "number", description: "Icon edge in pixels. Omit for the responsive clamp." },
+    { prop: "variant", type: '"outline" | "glass"', defaultValue: '"outline"', description: "A drawn hairline on nothing, or a translucent refracting surface." },
     { prop: "className", type: "string", description: "Merged onto the rail itself, not the scroll container." },
   ]}
 />
@@ -144,6 +173,7 @@ label's headroom, so a raised label is never clipped.
     { prop: "label", type: "string", description: "Accessible name for the link, and the text of the hover label." },
     { prop: "href", type: "string", description: "Destination. mailto: and tel: work as well as URLs." },
     { prop: "icon", type: "React.ReactNode", description: "Rendered in a square, rounded, clipped box. Images fill and crop." },
+    { prop: "badge", type: "string", description: "Shows a dot on the mark. The text joins the link's accessible name, so the dot means something read aloud too." },
     { prop: "external", type: "boolean", description: "Open in a new tab. Defaults to true for absolute http(s) URLs." },
   ]}
 />
@@ -152,6 +182,8 @@ label's headroom, so a raised label is never clipped.
 
 - **The label is decoration; the link carries the name.** Each mark's accessible name comes from a visually hidden span, and the raised label is `aria-hidden` — so a screen reader hears one link per mark rather than the name twice.
 - **Keyboard gets the same behaviour as the pointer.** `focus-within` spreads the row and `focus-visible` raises the label, so tabbing through the rail reads the same way hovering it does.
-- **Marks never shrink below 48px**, which keeps them above the minimum comfortable touch target. When the rail no longer fits, it scrolls.
+- **Marks never shrink below 40px.** When the rail no longer fits, it scrolls rather than shrinking further.
+- **Touch taps do not open a label.** The spread is driven by pointer events and ignores `pointerType: "touch"`, so a tap navigates instead of leaving a mark stuck open.
+- **Glass is a surface, not a motion channel.** `backdrop-filter` on a genuinely translucent pane is permitted here; blur as a way of *moving* something is still refused. See [the thesis](https://github.com/akkki007/keizoku-ui/blob/main/docs/KEIZOKU.md).
 - **`external` defaults on for absolute URLs** and adds `rel="noreferrer noopener"`. Relative paths, `mailto:` and `tel:` stay in place.
-- **Under `prefers-reduced-motion`** the spread and the label resolve instantly — the motion variables floor at 0.01ms, so the states still change but nothing travels.
+- **Under `prefers-reduced-motion`** the spread and the label resolve instantly. GSAP reads its duration from `--k-dur-2`, which the shipped floor collapses to 0.01ms, so the states still change but nothing travels.

@@ -32,12 +32,34 @@ This is a deliberate complement to [ObsidianUI](../ObsidianUI), not a successor.
 | | **Keizoku refuses** | **ObsidianUI refuses** |
 |---|---|---|
 | Motion | blur as a motion channel; spring/bounce; press-scale | instant/stepped transitions; mechanical linear easing |
-| Depth | elevation shadows; glow | flat structure with no elevation cue |
+| Depth | elevation shadow between opaque surfaces; glow | flat structure with no elevation cue |
 | Structure | invisible layout; undrawn grids | visible rules as ornament; dashed grids |
 | Colour | coloured chrome; gradient meshes; >1 accent | warm achromatic restraint as the whole personality |
 | Surface | uniform radius | radius contrast in one view |
 | Type | one family doing every job | uppercase letter-spaced mono as a primary voice |
 | Spectacle | WebGL, shaders, particles | spectacle built only from layout |
+
+## Blur, precisely
+
+The refuse list says *blur*. That was always shorthand for one thing, and the
+`socials` glass variant is the point at which it has to be said properly:
+
+> Blur is refused as a **motion channel**. Nothing here defocuses on its way
+> in or out — that is the other library's signature, and `--k-ease-travel`
+> plus a clip wipe is how Keizoku says the same thing.
+>
+> **Surface** blur is permitted where the surface is genuinely translucent and
+> there is something behind it worth refracting. A `backdrop-filter` on a pane
+> is a material property, not a transition.
+
+The test is whether the blur is doing work a still frame can show. A glass rail
+over a photograph reads as glass with the page paused; a blurred fade-in only
+exists while it is moving. The first is a surface, the second is motion, and
+only the second is refused.
+
+Elevation shadow carries the same caveat and no more: a translucent pane casts
+an ambient shadow because that is what a pane does. It does not license shadow
+as a way of ranking two opaque cards — rules and a 1px ring still do that.
 
 ## Token scale, against ObsidianUI
 

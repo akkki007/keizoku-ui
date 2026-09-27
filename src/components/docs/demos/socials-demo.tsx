@@ -22,9 +22,25 @@ const WORK: SocialItem[] = [
 ];
 
 export function SocialsDemo() {
+  return <Socials groups={[CONTACT, WORK]} label="Find me on" />;
+}
+
+/* Glass only earns its keep over something worth refracting, so the demo
+   gives it a surface to sit on rather than a flat panel. */
+export function SocialsGlassDemo() {
+  const withBadge = CONTACT.map((item) =>
+    item.label === "Telegram" ? { ...item, badge: "2 unread" } : item,
+  );
+
   return (
-    <div className="w-full">
-      <Socials groups={[CONTACT, WORK]} label="Find me on" />
+    <div className="relative isolate w-full overflow-hidden rounded-md">
+      <div
+        aria-hidden
+        className="absolute inset-0 -z-10 bg-[radial-gradient(120%_120%_at_20%_0%,var(--color-shu-400)_0%,transparent_55%),radial-gradient(100%_100%_at_90%_100%,var(--color-sumi-400)_0%,transparent_60%)] opacity-70"
+      />
+      <div className="flex min-h-[220px] items-center px-4">
+        <Socials variant="glass" groups={[withBadge, WORK]} label="Find me on" />
+      </div>
     </div>
   );
 }

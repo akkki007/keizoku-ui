@@ -46,8 +46,6 @@
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo,
     monospace;
 
-  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
-
   /* ── Motion scale ───────────────────────────────────────────────
      Four steps, not seven. A short scale reads mechanical; a finely
      graded one reads organic, which is the other library's job.
@@ -56,11 +54,6 @@
      Components reference these directly (`duration-[var(--k-dur-2)]`)
      rather than through a Tailwind theme key, so the registry can ship
      them as one plain `:root` rule that works in any project. */
-  --k-unit: 8px;
-  --k-rule: 1px;
-  --k-dash: 4px 4px;
-
-  --k-dur-0: 0ms; /* state changes that should not animate */
   --k-dur-1: 120ms; /* ink/fill change: hover, press, focus */
   --k-dur-2: 200ms; /* travel: pill slide, rail move, tabs */
   --k-dur-3: 320ms; /* reveal: clip wipe, panel open, accordion */
@@ -70,9 +63,6 @@
      rather than a thrown object. Draws are linear — a pen does not ease. */
   --k-ease-travel: cubic-bezier(0.65, 0, 0.35, 1);
   --k-ease-draw: linear;
-
-  --k-clip-hidden: inset(0 100% 0 0);
-  --k-clip-shown: inset(0 0 0 0);
 }
 
 /* ── Light: warm paper ──────────────────────────────────────────── */
@@ -114,7 +104,6 @@
      A third text level for the mono label voice, and the single accent. */
   --meta: var(--sumi-500);
   --brand: var(--shu-500);
-  --brand-hover: var(--shu-600);
   --brand-text: var(--shu-600);
 
   /* The hero's ambient glow and grain need different weights per
@@ -154,7 +143,6 @@
 
   --meta: var(--sumi-500);
   --brand: var(--shu-500);
-  --brand-hover: var(--shu-400);
   --brand-text: var(--shu-300);
 
   --hero-glow: 0.07;
@@ -203,7 +191,6 @@
 
   --color-meta: var(--meta);
   --color-brand: var(--brand);
-  --color-brand-hover: var(--brand-hover);
   --color-brand-text: var(--brand-text);
 
   /* shadcn's offsets, unchanged, so anything installed alongside a Keizoku
@@ -217,9 +204,6 @@
   --font-sans: var(--font-sans);
   --font-serif: var(--font-serif);
   --font-mono: var(--font-mono);
-  --ease-out-expo: var(--ease-out-expo);
-  --ease-travel: var(--k-ease-travel);
-  --ease-draw: var(--k-ease-draw);
 }
 
 @layer base {
@@ -286,6 +270,5 @@
     --k-dur-2: 0.01ms;
     --k-dur-3: 0.01ms;
     --k-dur-draw: 0.01ms;
-    --k-clip-hidden: inset(0 0 0 0);
   }
 }

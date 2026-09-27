@@ -6,8 +6,8 @@ import ts from 'typescript';
 /** Where installed components fetch their demo assets from. Override in CI
  *  (or locally against `next dev`) with REGISTRY_ORIGIN. */
 export const REGISTRY_ORIGIN = process.env.REGISTRY_ORIGIN ?? 'https://keizoku.akkki.tech';
-export const REGISTRY_NAME = 'keizoku-ui';
-export const COMPONENT_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
+const REGISTRY_NAME = 'keizoku-ui';
+const COMPONENT_NAME = /^[a-z0-9]+(?:-[a-z0-9]+)*$/;
 
 type FileType = 'registry:ui' | 'registry:block' | 'registry:hook' | 'registry:lib' | 'registry:file';
 type ItemType = FileType | 'registry:theme';
@@ -39,7 +39,7 @@ export interface Registry { $schema: string; name: string; homepage: string; ite
  * 0.01ms rather than 0 under reduced motion, so `transitionend` still fires
  * and anything awaiting it does not hang.
  */
-export const MOTION_CSS = {
+const MOTION_CSS = {
     ':root': {
         '--k-dur-1': '120ms',
         '--k-dur-2': '200ms',
@@ -66,12 +66,12 @@ const slash = (value: string) => value.split(path.sep).join('/');
  * docs site's own layout rather than a component. If a ui/ or block/ entry
  * imports one, the build fails loudly rather than shipping it.
  */
-export const REGISTRY_EXCLUDE = new Set([
+const REGISTRY_EXCLUDE = new Set([
     'app/globals.css',
     'components/site/theme-provider.tsx',
 ]);
 
-export function isWithin(directory: string, filename: string): boolean {
+function isWithin(directory: string, filename: string): boolean {
     const relative = path.relative(directory, filename);
     return relative !== '' && !relative.startsWith(`..${path.sep}`) && relative !== '..' && !path.isAbsolute(relative);
 }
@@ -289,7 +289,7 @@ const isPaletteVar = (name: string) =>
     !name.startsWith('--ease-') &&
     name !== '--grain-opacity';
 
-export function buildThemeItem(projectRoot: string, origin = REGISTRY_ORIGIN): RegistryItem {
+function buildThemeItem(projectRoot: string, origin = REGISTRY_ORIGIN): RegistryItem {
     const css = fs.readFileSync(path.resolve(projectRoot, 'src/styles/keizoku.css'), 'utf8');
     const primitives = pick(readBlock(css, ':root', 1), isPaletteVar);
     const light = pick(readBlock(css, ':root', 2), isPaletteVar);
@@ -309,8 +309,7 @@ export function buildThemeItem(projectRoot: string, origin = REGISTRY_ORIGIN): R
     // Only the names a shadcn project does not already map for itself.
     const theme = pick(mapped, name =>
         name.startsWith('--color-sumi-') || name.startsWith('--color-shu-') ||
-        name === '--color-meta' || name.startsWith('--color-brand') ||
-        name === '--ease-travel' || name === '--ease-draw');
+        name === '--color-meta' || name.startsWith('--color-brand'));
 
     return {
         $schema: 'https://ui.shadcn.com/schema/registry-item.json',
@@ -336,7 +335,7 @@ export function writeRegistry(projectRoot: string, registry: Registry): void {
     fs.mkdirSync(directory, { recursive: true });
     if (!isWithin(fs.realpathSync(projectRoot), fs.realpathSync(directory))) throw new Error('Registry output escapes project root');
 
-    const expected = new Set(['index.json', 'registry.json', ...registry.items.map(item => `${item.name}.json`)]);
+    const expected = new Set(['registry.json', ...registry.items.map(item => `${item.name}.json`)]);
     for (const name of expected) {
         const filename = path.join(directory, name);
         const existing = fs.lstatSync(filename, { throwIfNoEntry: false });
@@ -347,9 +346,7 @@ export function writeRegistry(projectRoot: string, registry: Registry): void {
     for (const item of registry.items) {
         fs.writeFileSync(path.join(directory, `${item.name}.json`), JSON.stringify(item, null, 2) + '\n');
     }
-    for (const name of ['index.json', 'registry.json']) {
-        fs.writeFileSync(path.join(directory, name), JSON.stringify(registry, null, 2) + '\n');
-    }
+    fs.writeFileSync(path.join(directory, 'registry.json'), JSON.stringify(registry, null, 2) + '\n');
     // Drop manifests for components that no longer exist.
     for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
         if (entry.isFile() && entry.name.endsWith('.json') && !expected.has(entry.name)) {

@@ -133,7 +133,7 @@ export function Hero() {
           className="mt-10 flex flex-col items-center gap-3 sm:flex-row"
         >
           <Link
-            href="/docs/ruled-section"
+            href="/docs/socials"
             className="group inline-flex items-center gap-2 rounded-full bg-primary px-6 py-3 text-[15px] font-medium text-primary-foreground transition-opacity duration-200 hover:opacity-90 active:scale-[0.98]"
           >
             Browse components

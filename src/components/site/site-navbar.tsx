@@ -6,7 +6,7 @@ export function SiteNavbar() {
   return (
     <Navbar
       leftLinks={[
-        { label: "Components", href: "/docs/ruled-section" },
+        { label: "Components", href: "/docs/socials" },
         { label: "Theming", href: "/docs/theming" },
       ]}
       rightLinks={[

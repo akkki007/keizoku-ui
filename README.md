@@ -46,7 +46,7 @@ Or register the namespace once in `components.json` and install by name:
 ```
 
 ```bash
-npx shadcn@latest add @keizoku/ruled-section
+npx shadcn@latest add @keizoku/socials
 ```
 
 There is nothing to set up first. Components are written against the shadcn

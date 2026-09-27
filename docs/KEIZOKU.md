@@ -92,7 +92,7 @@ The 2× gap ratio still applies *inside* a ruled cell — rules replace separato
 docs/KEIZOKU.md       this document
 src/styles/keizoku.css   the full token scale — colour, type, motion;
                          the optional theme registry item is generated from it
-src/components/ui/       installable primitives (ruled-section, mode-toggle)
+src/components/ui/       installable primitives (socials, mode-toggle)
 src/components/block/    installable composed components (navbar)
 src/content/             the MDX docs, served at /docs
 scripts/registry.ts      generates public/r/*.json from the two folders above
@@ -135,7 +135,7 @@ npx shadcn@latest add "https://keizoku.akkki.tech/r/theme.json"
 ## Next
 
 - [x] Port `hero.html` to React + Tailwind v4 (`@theme inline` maps onto the `:root` tokens; values stay in `:root`, or any unbuilt page renders unstyled)
-- [x] Ruled section container as the second component — the primitive every other layout hangs off
+- [ ] Ruled section container — the primitive every other layout hangs off. Built once and withdrawn: it documented the thesis more than it earned a place in the library. Worth rebuilding only when a second component actually needs to hang off it.
 - [x] shadcn-compatible registry, and a docs site that installs from it
 - [ ] Re-derive the `transitions-dev` recipe inventory into Keizoku's motion vocabulary
 - [ ] Bring the landing hero onto the motion scale — it still uses blur and `ease-out-expo`, both of which `KEIZOKU-TASTE.md` refuses

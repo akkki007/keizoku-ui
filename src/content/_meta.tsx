@@ -16,15 +16,10 @@ const meta = {
   theming: "Theming",
   "---3": {
     type: "separator",
-    title: "Layout",
-  },
-  "ruled-section": "Ruled Section",
-  "---4": {
-    type: "separator",
     title: "Navigation",
   },
   navbar: "Navbar",
-  "---5": {
+  "---4": {
     type: "separator",
     title: "Links & Media",
   },

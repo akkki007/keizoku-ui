@@ -1,6 +1,7 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono, Instrument_Serif } from "next/font/google";
 import { ThemeProvider } from "@/components/site/theme-provider";
+import { site } from "@/lib/site";
 import "./globals.css";
 
 const geist = Geist({
@@ -25,9 +26,50 @@ const instrumentSerif = Instrument_Serif({
 });
 
 export const metadata: Metadata = {
-  title: "Keizoku UI — Components with staying power",
-  description:
-    "A React component library for interfaces that earn a second look. Built on Tailwind CSS v4, shipped as source you own.",
+  /* metadataBase resolves every relative URL below — OG images, canonicals,
+     the manifest — against the deployment actually being served. */
+  metadataBase: new URL(site.url),
+  title: {
+    default: `${site.name} — ${site.tagline}`,
+    /* Pages set only their own name; the suffix is appended here so it can
+       never drift between the title tag and the OG title. */
+    template: `%s — ${site.name}`,
+  },
+  description: site.description,
+  keywords: [...site.keywords],
+  authors: [{ name: site.author, url: site.repository }],
+  creator: site.author,
+  applicationName: site.name,
+  alternates: { canonical: "/" },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: site.name,
+    title: `${site.name} — ${site.tagline}`,
+    description: site.description,
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: `${site.name} — ${site.tagline}`,
+    description: site.description,
+  },
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: { index: true, follow: true, "max-image-preview": "large", "max-snippet": -1 },
+  },
+  category: "technology",
+};
+
+/* Told to the browser so the URL bar and form controls match the theme that
+   next-themes will settle on, rather than flashing the other one. */
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#fbfbfa" },
+    { media: "(prefers-color-scheme: dark)", color: "#1a1a18" },
+  ],
+  colorScheme: "light dark",
 };
 
 export default function RootLayout({

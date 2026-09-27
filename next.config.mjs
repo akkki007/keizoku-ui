@@ -15,6 +15,18 @@ const nextConfig = {
   outputFileTracingIncludes: {
     "/docs/[[...mdxPath]]": ["./src/styles/*.css"],
   },
+  async redirects() {
+    return [
+      {
+        // /docs has no page of its own. Redirecting here rather than inside
+        // the catch-all keeps it working under `dynamicParams: false`, which
+        // would otherwise 404 the bare path before any code runs.
+        source: "/docs",
+        destination: "/docs/introduction",
+        permanent: false,
+      },
+    ];
+  },
   async headers() {
     return [
       {

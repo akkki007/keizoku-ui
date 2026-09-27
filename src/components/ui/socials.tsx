@@ -239,8 +239,13 @@ function SocialLink({ label, href, icon, badge, external }: SocialItem) {
         </span>
 
         {/* Marks arrive pre-rounded or square; clipping to the same radius
-            makes the run consistent either way. */}
-        <span className="block size-full overflow-hidden rounded-[calc(var(--rail-icon)*0.25)] [&_img]:size-full [&_img]:object-cover [&_svg]:size-full">
+            makes the run consistent either way.
+
+            The inset outline is the perceptual rule, not a stylistic one:
+            pure black or white at 10%, never tinted. Without it a mark whose
+            own artwork is near-black — X, say — loses its edge against a dark
+            surface and reads as a hole in the rail. */}
+        <span className="block size-full overflow-hidden rounded-[calc(var(--rail-icon)*0.25)] shadow-[inset_0_0_0_1px_rgb(0_0_0/0.1)] dark:shadow-[inset_0_0_0_1px_rgb(255_255_255/0.1)] [&_img]:size-full [&_img]:object-cover [&_svg]:size-full">
           {icon}
         </span>
 

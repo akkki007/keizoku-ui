@@ -7,9 +7,12 @@
    themes — only the page background flips. */
 
 .keizoku-docs {
-  /* Our own bar is fixed at 64px and Nextra offsets its sidebar and TOC
+  /* Our own bar is fixed at 56px and Nextra offsets its sidebar and TOC
      from this value. */
-  --nextra-navbar-height: 64px;
+  --nextra-navbar-height: 56px;
+  /* The docs controls band, below md only. Nextra's mobile panel has to
+     clear it as well as the site bar, so both read the same number. */
+  --docs-bar-height: 48px;
   /* Sidebar (256) + TOC (256) + the article's own 96px of padding come out
      of this, so the reading column is roughly 830px at this width. */
   --nextra-content-width: 1440px;
@@ -169,10 +172,10 @@
   display: none;
 }
 
-/* Nextra's mobile panel starts under the site bar; the docs toggle sits in
-   that same band, so the panel's content clears both. */
+/* Nextra's mobile panel starts under the site bar; the docs band sits in
+   front of it at a higher layer, so the panel's content clears both. */
 .keizoku-docs .nextra-mobile-nav {
-  padding-top: calc(var(--nextra-navbar-height) + 40px);
+  padding-top: calc(var(--nextra-navbar-height) + var(--docs-bar-height));
 }
 
 

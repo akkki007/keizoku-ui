@@ -15,8 +15,8 @@ export function DocsBar() {
   const open = useMenu();
 
   return (
-    <div className="sticky top-16 z-30 bg-background md:hidden">
-      <div className="relative flex h-14 items-center gap-3 px-4">
+    <div className="sticky top-14 z-30 bg-background md:hidden">
+      <div className="relative flex h-[var(--docs-bar-height)] items-center gap-3 px-4">
         <div
           aria-hidden
           className="absolute inset-x-0 bottom-0 h-px bg-[repeating-linear-gradient(to_right,var(--border)_0_4px,transparent_4px_8px)]"

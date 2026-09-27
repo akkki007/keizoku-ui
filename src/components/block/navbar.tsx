@@ -65,7 +65,7 @@ export function Navbar({
   brandHref = "/",
   leftLinks = [],
   rightLinks = [],
-  actions = <ModeToggle className="-my-1.5" />,
+  actions = <ModeToggle />,
   ...props
 }: NavbarProps) {
   const [open, setOpen] = useState(false);
@@ -75,42 +75,42 @@ export function Navbar({
   return (
     <>
       <header
-        className={cn("fixed inset-x-0 top-0 z-50 flex h-16", className)}
+        className={cn("fixed inset-x-0 top-0 z-50 flex h-14", className)}
         {...props}
       >
-        {/* The bar is opaque across its whole height, not just the 40px rails.
-            The notch is drawn by its hairlines, not cut out of the page, so
-            nothing is lost — and without this, content scrolls through the
-            24px band either side of the notch. */}
-        <div aria-hidden className="absolute inset-0 -z-10 bg-background" />
+        {/* No backdrop behind the whole 56px box: the rails, the corner clip
+            paths and the centre slice already describe the silhouette, and
+            filling the rectangle behind them turns a cut shape into a drawn
+            one. The page is meant to show through beside the notch — that is
+            what makes it read as a cutout rather than as a line. */}
 
         {/* Left rail */}
-        <div className="relative z-20 h-10 min-w-0 flex-1 bg-background">
+        <div className="relative z-20 h-5 min-w-0 flex-1 bg-background">
           <svg
             className="absolute inset-0 h-full w-full"
             preserveAspectRatio="none"
             aria-hidden
           >
-            <line x1="0" y1="39.5" x2="100%" y2="39.5" {...STROKE} />
-            <line x1="0" y1="36.5" x2="100%" y2="36.5" {...STROKE} />
+            <line x1="0" y1="19.5" x2="100%" y2="19.5" {...STROKE} />
+            <line x1="0" y1="16.5" x2="100%" y2="16.5" {...STROKE} />
           </svg>
         </div>
 
         {/* Notch */}
-        <div className="relative z-10 -ml-px flex h-16 shrink-0">
+        <div className="relative z-10 -ml-px flex h-14 shrink-0">
           {/* Left corner */}
-          <div className="relative h-full w-[50px] shrink-0">
+          <div className="relative h-full w-[44px] shrink-0">
             <div
               className="absolute inset-0 bg-background"
-              style={{ clipPath: "path('M0 0 H50 V64 C25 64 25 40 0 40 Z')" }}
+              style={{ clipPath: "path('M0 0 H44 V56 C22 56 22 20 0 20 Z')" }}
             />
             <svg
               className="pointer-events-none absolute inset-0 h-full w-full"
-              viewBox="0 0 50 64"
+              viewBox="0 0 44 56"
               aria-hidden
             >
-              <path d="M0 39.5 C25 39.5 25 63.5 50 63.5" {...STROKE} />
-              <path d="M0 36.5 C25 36.5 25 60.5 50 60.5" {...STROKE} />
+              <path d="M0 19.5 C22 19.5 22 55.5 44 55.5" {...STROKE} />
+              <path d="M0 16.5 C22 16.5 22 52.5 44 52.5" {...STROKE} />
             </svg>
           </div>
 
@@ -122,19 +122,19 @@ export function Navbar({
                 preserveAspectRatio="none"
                 aria-hidden
               >
-                <line x1="0" y1="63.5" x2="100%" y2="63.5" {...STROKE} />
-                <line x1="0" y1="60.5" x2="100%" y2="60.5" {...STROKE} />
+                <line x1="0" y1="55.5" x2="100%" y2="55.5" {...STROKE} />
+                <line x1="0" y1="52.5" x2="100%" y2="52.5" {...STROKE} />
               </svg>
             </div>
 
-            {/* The notch's visible body ends at the hairline (y≈62), not at
-                the 64px box, so the row is centred on that band rather than
-                on the element. */}
-            <div className="relative flex h-[62px] w-full items-center justify-between px-4 md:justify-center md:gap-10 md:px-8">
+            {/* Centred in the notch rather than in the header: the rail ends
+                at y=20, so padding the row past it leaves a 36px band from 20
+                to 56 and the links sit inside the cut instead of above it. */}
+            <div className="relative flex h-14 w-full items-center justify-between px-4 pt-5 md:justify-center md:gap-9 md:px-7">
               {leftLinks.length > 0 && (
                 <nav
                   aria-label="Primary"
-                  className="mb-0.5 hidden shrink-0 items-center gap-8 md:flex"
+                  className="hidden shrink-0 items-center gap-7 md:flex"
                 >
                   {leftLinks.map((item) => (
                     <NavLink key={item.label} {...item} />
@@ -152,7 +152,7 @@ export function Navbar({
               <button
                 ref={menuButtonRef}
                 type="button"
-                className="mb-0.5 p-1 text-muted-foreground transition-colors duration-[var(--k-dur-1)] hover:text-foreground md:hidden"
+                className="p-1 text-muted-foreground transition-colors duration-[var(--k-dur-1)] hover:text-foreground md:hidden"
                 onClick={() => setOpen((isOpen) => !isOpen)}
                 aria-label={open ? "Close menu" : "Open menu"}
                 aria-expanded={open}
@@ -165,9 +165,9 @@ export function Navbar({
                 )}
               </button>
 
-              <div className="mb-0.5 hidden shrink-0 items-center gap-8 md:flex">
+              <div className="hidden shrink-0 items-center gap-7 md:flex">
                 {rightLinks.length > 0 && (
-                  <nav aria-label="Secondary" className="flex items-center gap-8">
+                  <nav aria-label="Secondary" className="flex items-center gap-7">
                     {rightLinks.map((item) => (
                       <NavLink key={item.label} {...item} />
                     ))}
@@ -187,23 +187,23 @@ export function Navbar({
 
               {/* Also balances the mobile row against the menu button so the
                   brand stays optically centred. */}
-              {actions && <span className="-mb-1 md:hidden">{actions}</span>}
+              {actions && <span className="md:hidden">{actions}</span>}
             </div>
           </div>
 
           {/* Right corner */}
-          <div className="relative -ml-px h-full w-[50px] shrink-0">
+          <div className="relative -ml-px h-full w-[44px] shrink-0">
             <div
               className="absolute inset-0 bg-background"
-              style={{ clipPath: "path('M0 0 H50 V40 C25 40 25 64 0 64 Z')" }}
+              style={{ clipPath: "path('M0 0 H44 V20 C22 20 22 56 0 56 Z')" }}
             />
             <svg
               className="pointer-events-none absolute inset-0 h-full w-full"
-              viewBox="0 0 50 64"
+              viewBox="0 0 44 56"
               aria-hidden
             >
-              <path d="M0 63.5 C25 63.5 25 39.5 50 39.5" {...STROKE} />
-              <path d="M0 60.5 C25 60.5 25 36.5 50 36.5" {...STROKE} />
+              <path d="M0 55.5 C22 55.5 22 19.5 44 19.5" {...STROKE} />
+              <path d="M0 52.5 C22 52.5 22 16.5 44 16.5" {...STROKE} />
             </svg>
           </div>
         </div>
@@ -215,8 +215,8 @@ export function Navbar({
             preserveAspectRatio="none"
             aria-hidden
           >
-            <line x1="0" y1="39.5" x2="100%" y2="39.5" {...STROKE} />
-            <line x1="0" y1="36.5" x2="100%" y2="36.5" {...STROKE} />
+            <line x1="0" y1="19.5" x2="100%" y2="19.5" {...STROKE} />
+            <line x1="0" y1="16.5" x2="100%" y2="16.5" {...STROKE} />
           </svg>
         </div>
       </header>
@@ -230,7 +230,7 @@ export function Navbar({
             animate={reduced ? { opacity: 1 } : { clipPath: "inset(0 0 0% 0)" }}
             exit={reduced ? { opacity: 0 } : { clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: reduced ? 0 : 0.32, ease: [0.65, 0, 0.35, 1] }}
-            className="fixed inset-x-0 top-16 z-40 border-b border-border bg-card p-3 md:hidden"
+            className="fixed inset-x-0 top-14 z-40 border-b border-border bg-card p-3 md:hidden"
           >
             <nav
               id="site-mobile-navigation"

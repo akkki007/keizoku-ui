@@ -13,7 +13,7 @@ export default function NotFound() {
   return (
     <>
       <SiteNavbar />
-      <main className="flex min-h-svh flex-col items-center justify-center px-6 pt-16 text-center">
+      <main className="flex min-h-svh flex-col items-center justify-center px-6 pt-14 text-center">
         <span className="font-mono text-[11px] uppercase tracking-[0.14em] text-meta">
           404 · not found
         </span>

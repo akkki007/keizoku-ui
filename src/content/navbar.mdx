@@ -86,8 +86,8 @@ export default function Layout({ children }: { children: React.ReactNode }) {
         leftLinks={[{ label: "Components", href: "/docs" }]}
         rightLinks={[{ label: "Docs", href: "/docs" }]}
       />
-      {/* The bar is fixed at 64px; offset whatever follows it. */}
-      <main className="pt-16">{children}</main>
+      {/* The bar is fixed at 56px; offset whatever follows it. */}
+      <main className="pt-14">{children}</main>
     </>
   )
 }`} />
@@ -129,7 +129,8 @@ Pass `actions={null}` to remove them, and the divider with them.
 
 ## Notes
 
-- **Height is 64px**, and the visible band ends at the hairline around y=62. Offset the page by `pt-16` and the first element sits on the rule rather than under it.
+- **Height is 56px**, with the rails 20px deep and the notch dropping to the hairline at y≈54. Offset the page by `pt-14` and the first element sits on the rule rather than under it.
+- **The notch is a real cutout, not a drawn line.** Nothing fills the box behind the rails, so the page shows through the band either side of the notch and scrolls past it. Give the header a background of its own if you want it sealed — you lose the cut.
 - **The mobile panel is uncovered, not faded** — a `clip-path` inset travelling from the top edge over `--k-dur-3`. Under `prefers-reduced-motion` it becomes an opacity change with no travel.
 - **Escape closes the panel** and returns focus to the menu button.
 - **Hover is a 120ms ink change.** No underline slide, no scale. If you want movement in the bar, put it in the rule, not in the links.

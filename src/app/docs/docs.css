@@ -175,40 +175,59 @@
   padding-top: calc(var(--nextra-navbar-height) + 40px);
 }
 
-/* Nextra's search input, restyled: a pill control against square surfaces,
-   the radius contrast the library runs on. */
-.keizoku-docs .nextra-search input {
-  height: 32px;
-  border-radius: 999px;
-  border: 1px solid var(--border);
-  background: transparent;
-  color: var(--foreground);
-  font-family: var(--font-mono);
-  font-size: 12px;
-  transition: border-color var(--k-dur-1) var(--k-ease-travel);
+
+/* ── Search ─────────────────────────────────────────────────────────── */
+
+/* The sidebar has no header slot, so the trigger is portalled in and pinned
+   to a strip reserved here. Reserving it in CSS rather than letting the
+   portal add a flex item means the page list sits in its final place on the
+   server render, before the trigger mounts. */
+.keizoku-docs aside.nextra-sidebar {
+  position: relative;
+  padding-top: 60px;
 }
 
-.keizoku-docs .nextra-search input::placeholder {
-  color: var(--meta);
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  font-size: 11px;
+.keizoku-sidebar-search {
+  position: absolute;
+  inset-inline: 0;
+  top: 0;
+  display: flex;
+  align-items: center;
+  height: 60px;
+  padding-inline: 16px;
 }
 
-.keizoku-docs .nextra-search input:focus {
-  border-color: var(--border);
+/* The palette. Radix drives the state attributes cmdk's dialog renders, so
+   the overlay resolves and the panel travels — no blur on the way in, and
+   no scale. */
+@keyframes keizoku-cmd-overlay-in {
+  from {
+    opacity: 0;
+  }
 }
 
-/* The results popover is a framed surface, not an elevated one. */
-.keizoku-docs .nextra-search ul {
-  border: 1px solid var(--border);
-  border-radius: 6px;
-  background: var(--card);
-  box-shadow: none;
+@keyframes keizoku-cmd-panel-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, 8px);
+  }
 }
 
-/* The rail search sits in a 40px band, so its results popover has to clear
-   the bar rather than start inside it. */
-.keizoku-docs .nextra-search ul {
-  margin-top: 8px;
+.keizoku-cmd-overlay[data-state="open"] {
+  animation: keizoku-cmd-overlay-in var(--k-dur-2) var(--k-ease-travel);
+}
+
+.keizoku-cmd-panel[data-state="open"] {
+  animation: keizoku-cmd-panel-in var(--k-dur-2) var(--k-ease-travel);
+}
+
+/* A framed surface, not an elevated one: the ring reads as an edge rather
+   than as a drop shadow ranking it above the page. */
+.keizoku-cmd-panel {
+  box-shadow: 0 0 0 1px var(--border);
+}
+
+.keizoku-cmd-panel [cmdk-list] {
+  scrollbar-width: thin;
+  scrollbar-color: var(--border) transparent;
 }
